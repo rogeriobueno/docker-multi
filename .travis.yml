@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t rogerbu/react-test -f ./client/dev.Dockerfile ./client
+
+script:
+  - docker run -e CI=true rogerbu/react-test npm test -- --coverage
+
+after_sucess:
+  - docker build -t rogerbu/multi-client ./client
+  - docker build -t rogerbu/multi-nginx ./nginx
+  - docker build -t rogerbu/multi-server ./server
+  - docker build -t rogerbu/multi-worker ./worker
+  #Log in the DOCKER CLI
+  - echo "$DOCKER_PASSWORD" | docker loginb -u "$DOCKER_ID" --password-stdin
+  #push images
+  - docker push rogerbu/multi-client
+  - docker push rogerbu/multi-nginx 
+  - docker push rogerbu/multi-server 
+  - docker push rogerbu/multi-worker 
+  
