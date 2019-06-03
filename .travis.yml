@@ -8,14 +8,12 @@ before_install:
 script:
   - docker run rogerbu/react-test npm test -- --coverage
 
-after_sucess:
+after_success:
   - docker build -t rogerbu/multi-client ./client
   - docker build -t rogerbu/multi-nginx ./nginx
   - docker build -t rogerbu/multi-server ./server
   - docker build -t rogerbu/multi-worker ./worker
-  #Log in the DOCKER CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  #push images
   - docker push rogerbu/multi-client
   - docker push rogerbu/multi-nginx 
   - docker push rogerbu/multi-server 
